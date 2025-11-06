@@ -20,14 +20,14 @@ namespace SpreadStartingAmmo
                 return;
             }
 
-            float mod = 4f / (_playerLookups.Count > 0 ? _playerLookups.Count : SNet.HubPlayerCount);
+            float mod = (float)Configuration.BasePlayerCount / (_playerLookups.Count > 0 ? _playerLookups.Count : SNet.HubPlayerCount);
             ammoMods = new() { mod, mod, mod };
             // If this is part of the players on drop, give them the full modifier (or if they already existed, skip them)
             if (_playerLookups.Count == 0 || _playerLookups.Contains(player.Owner.Lookup)) return;
 
             // NOT one of the players on drop! Need to pull ammo from other players!
             _playerLookups.Add(player.Owner.Lookup);
-            mod = 4f / _playerLookups.Count;
+            mod = (float)Configuration.BasePlayerCount / _playerLookups.Count;
             for (int i = 0; i < ammoMods.Count; i++)
                 ammoMods[i] = mod;
 

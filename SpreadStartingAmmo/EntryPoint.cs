@@ -7,7 +7,7 @@ using SpreadStartingAmmo.Patches;
 
 namespace SpreadStartingAmmo
 {
-    [BepInPlugin("Dinorush." + MODNAME, MODNAME, "1.0.0")]
+    [BepInPlugin("Dinorush." + MODNAME, MODNAME, "1.0.2")]
     [BepInDependency("dev.gtfomodding.gtfo-api", BepInDependency.DependencyFlags.HardDependency)]
     [BepInDependency(ETCWrapper.GUID, BepInDependency.DependencyFlags.SoftDependency)]
     internal sealed class EntryPoint : BasePlugin
@@ -16,6 +16,7 @@ namespace SpreadStartingAmmo
 
         public override void Load()
         {
+            Configuration.Init();
             var harmony = new Harmony(MODNAME);
             harmony.PatchAll();
             if (!ETCWrapper.HasETC)
