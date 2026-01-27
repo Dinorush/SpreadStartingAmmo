@@ -1,6 +1,7 @@
 ﻿using GameData;
 using Player;
 using SNetwork;
+using SpreadStartingAmmo.Dependencies;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,6 +46,8 @@ namespace SpreadStartingAmmo
             List<(PlayerBackpack backpack, List<float> ammoList)> ammoPerSync = new(); // The ammo each player has (per slot).
             List<int> valid = new() { 0, 0, 0 }; // The number of players that have ammo (per slot).
 
+            var xpMod = GtfXPWrapper.GetAmmoMods();
+
             foreach (var otherPlayer in PlayerManager.PlayerAgentsInLevel)
             {
                 if (otherPlayer.Pointer == player.Pointer || !PlayerBackpackManager.TryGetBackpack(otherPlayer.Owner, out var backpack)) continue;
@@ -54,6 +57,14 @@ namespace SpreadStartingAmmo
                     ToggleMagsInReserves(backpack, putInReserves: true);
 
                 List<float> list = new() { storage.StandardAmmo.AmmoInPack, storage.SpecialAmmo.AmmoInPack, storage.ClassAmmo.AmmoInPack };
+
+                if (otherPlayer.IsLocallyOwned)
+                {
+                    list[0] /= xpMod.standard;
+                    list[1] /= xpMod.special;
+                    list[2] /= xpMod.tool;
+                }
+
                 if (backpack.TryGetBackpackItem(InventorySlot.GearClass, out var item) && item.Instance != null && item.Instance.ItemDataBlock.BlockToolAmmoRefill) // Biotracker guard
                     list[2] = 0;
 
@@ -96,17 +107,22 @@ namespace SpreadStartingAmmo
             {
                 var localBackpack = PlayerBackpackManager.LocalBackpack;
                 var localList = ammoPerSync.First(x => x.backpack.Pointer == localBackpack.Pointer).ammoList;
+                localList[0] *= xpMod.standard;
+                localList[1] *= xpMod.special;
+                localList[2] *= xpMod.tool;
                 var localStorage = localBackpack.AmmoStorage;
                 localStorage.SetAmmo(AmmoType.Standard, localList[0]);
                 localStorage.SetAmmo(AmmoType.Special, localList[1]);
                 localStorage.SetAmmo(AmmoType.Class, localList[2]);
                 ToggleMagsInReserves(localBackpack, putInReserves: false);
+                localStorage.UpdateAllAmmoUI();
             }
-            else if (SNet.IsMaster)
+
+            if (SNet.IsMaster)
             {
                 foreach ((var backpack, var ammoList) in ammoPerSync)
                 {
-                    if (!backpack.Owner.IsBot) continue;
+                    if (!backpack.Owner.IsBot || backpack.Owner.Pointer == player.Owner.Pointer) continue;
                     var storage = backpack.AmmoStorage;
                     storage.SetAmmo(AmmoType.Standard, ammoList[0]);
                     storage.SetAmmo(AmmoType.Special, ammoList[1]);
