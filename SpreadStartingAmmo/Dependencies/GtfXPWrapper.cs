@@ -25,8 +25,10 @@ namespace SpreadStartingAmmo.Dependencies
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static (float standard, float special, float tool) GetAmmoMods_Internal()
         {
-            var layout = CacheApiWrapper.GetCurrentLevelLayout();
             (float standard, float special, float tool) = (1f, 1f, 1f);
+            if (!CacheApiWrapper.TryGetCurrentLevelLayout(out var layout) || layout.StartingBuffs == null)
+                return (standard, special, tool);
+
             foreach (var buff in layout.StartingBuffs)
             {
                 switch (buff.StartBuff)
