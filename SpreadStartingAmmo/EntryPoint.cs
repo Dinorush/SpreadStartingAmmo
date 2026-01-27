@@ -7,7 +7,7 @@ using SpreadStartingAmmo.Patches;
 
 namespace SpreadStartingAmmo
 {
-    [BepInPlugin("Dinorush." + MODNAME, MODNAME, "1.0.2")]
+    [BepInPlugin("Dinorush." + MODNAME, MODNAME, "1.0.3")]
     [BepInDependency("dev.gtfomodding.gtfo-api", BepInDependency.DependencyFlags.HardDependency)]
     [BepInDependency(ETCWrapper.GUID, BepInDependency.DependencyFlags.SoftDependency)]
     internal sealed class EntryPoint : BasePlugin
