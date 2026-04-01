@@ -1,5 +1,6 @@
 ﻿using BepInEx.Unity.IL2CPP;
 using GTFuckingXP.Extensions;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 namespace SpreadStartingAmmo.Dependencies
@@ -29,21 +30,9 @@ namespace SpreadStartingAmmo.Dependencies
             if (!CacheApiWrapper.TryGetCurrentLevelLayout(out var layout) || layout.StartingBuffs == null)
                 return (standard, special, tool);
 
-            foreach (var buff in layout.StartingBuffs)
-            {
-                switch (buff.StartBuff)
-                {
-                    case GTFuckingXP.Enums.StartBuff.AmmunitionMainMultiplier:
-                        standard *= buff.Value;
-                        break;
-                    case GTFuckingXP.Enums.StartBuff.AmmunitionSpecialMultiplier:
-                        special *= buff.Value;
-                        break;
-                    case GTFuckingXP.Enums.StartBuff.AmmunitionToolMultiplier:
-                        tool *= buff.Value;
-                        break;
-                }
-            }
+            standard = layout.StartingBuffs.GetValueOrDefault(GTFuckingXP.Enums.StartBuff.AmmunitionMainMultiplier, 1f);
+            special = layout.StartingBuffs.GetValueOrDefault(GTFuckingXP.Enums.StartBuff.AmmunitionSpecialMultiplier, 1f);
+            tool = layout.StartingBuffs.GetValueOrDefault(GTFuckingXP.Enums.StartBuff.AmmunitionToolMultiplier, 1f);
             return (standard, special, tool);
         }
     }
