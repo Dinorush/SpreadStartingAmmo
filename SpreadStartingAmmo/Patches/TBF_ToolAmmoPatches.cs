@@ -4,7 +4,7 @@ using System;
 
 namespace SpreadStartingAmmo.Patches
 {
-    internal static class ETC_ToolAmmoPatches
+    internal static class TBF_ToolAmmoPatches
     {
         [HarmonyPatch(typeof(PlayerAmmoStorage), nameof(PlayerAmmoStorage.UpdateBulletsInPack))]
         [HarmonyWrapSafe]

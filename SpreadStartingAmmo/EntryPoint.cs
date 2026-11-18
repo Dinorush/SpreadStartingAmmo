@@ -7,9 +7,9 @@ using SpreadStartingAmmo.Patches;
 
 namespace SpreadStartingAmmo
 {
-    [BepInPlugin("Dinorush." + MODNAME, MODNAME, "1.0.5")]
+    [BepInPlugin("Dinorush." + MODNAME, MODNAME, "1.0.6")]
     [BepInDependency("dev.gtfomodding.gtfo-api", BepInDependency.DependencyFlags.HardDependency)]
-    [BepInDependency(ETCWrapper.GUID, BepInDependency.DependencyFlags.SoftDependency)]
+    [BepInDependency(TBFWrapper.GUID, BepInDependency.DependencyFlags.SoftDependency)]
     internal sealed class EntryPoint : BasePlugin
     {
         public const string MODNAME = "SpreadStartingAmmo";
@@ -19,8 +19,8 @@ namespace SpreadStartingAmmo
             Configuration.Init();
             var harmony = new Harmony(MODNAME);
             harmony.PatchAll();
-            if (!ETCWrapper.HasETC)
-                harmony.PatchAll(typeof(ETC_ToolAmmoPatches));
+            if (!TBFWrapper.HasTBF)
+                harmony.PatchAll(typeof(TBF_ToolAmmoPatches));
             LevelAPI.OnEnterLevel += AmmoSpreadManager.OnLevelStart;
             LevelAPI.OnLevelCleanup += AmmoSpreadManager.OnLevelCleanup;
             Log.LogMessage("Loaded " + MODNAME);
